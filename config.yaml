@@ -1,0 +1,75 @@
+# MetRAG Configuration File
+# Edit these settings to customize the pipeline
+
+# Data paths
+data:
+  train_dir: "data/train"
+  test_dir: "data/test"
+  metadata_path: "data/metadata.csv"
+
+# Output directories
+output:
+  models_dir: "models"
+  predictions_dir: "outputs/predictions"
+  rag_dir: "outputs/rag"
+  reports_dir: "outputs/rag/reports"
+  visualizations_dir: "outputs/visualizations"
+  logs_dir: "outputs/logs"
+
+# Segmentation model configuration
+segmentation:
+  # Model architecture
+  in_channels: 4  # Number of MRI sequences
+  out_channels: 1  # Binary segmentation
+  base_channels: 16  # Base feature channels (8, 16, 32)
+  depth: 3  # Network depth (3 or 4)
+  dropout: 0.1  # Dropout probability
+
+  # Training parameters
+  epochs: 50
+  batch_size: 2  # Reduce to 1 if OOM
+  patch_size: [96, 96, 96]  # 3D patch size
+  learning_rate: 0.001
+  weight_decay: 0.00001
+  val_ratio: 0.15  # Validation split
+
+  # Loss function
+  dice_weight: 0.7
+  bce_weight: 0.3
+
+  # System
+  num_workers: 4
+  save_freq: 10  # Save checkpoint every N epochs
+
+  # Inference
+  window_size: [96, 96, 96]
+  overlap: 0.5
+
+# RAG configuration
+rag:
+  # Feature extraction
+  sequences: ["t1_gd"]  # Sequences to use for embeddings
+  num_slices: 16  # Number of slices for embedding
+
+  # Retrieval
+  k_cases: 5  # Number of similar cases
+  k_facts: 3  # Number of KB facts
+
+  # Report generation
+  use_openai: false  # Use GPT for reports (requires API key)
+  openai_model: "gpt-4o-mini"
+  max_tokens: 800
+  temperature: 0.3
+
+# MRI sequences
+sequences:
+  - t1_pre
+  - t1_gd
+  - flair
+  - bravo
+
+# Random seed for reproducibility
+seed: 42
+
+# Device configuration
+device: "cuda"  # "cuda" or "cpu"
